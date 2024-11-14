@@ -7,7 +7,6 @@ import {
   SearchOutlined,
   ShoppingCartOutlined,
   MenuOutlined,
-  DownOutlined,
 } from "@ant-design/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {Link } from 'react-router-dom'
@@ -40,6 +39,7 @@ function NavBar() {
           {/* Logo Section */}
           <div className="col-6 col-md-3 d-flex">
           <div style={{ width: "100%"}}>
+            <Link to="/">
             <img 
               src="logo1.png" 
               alt="Logo" 
@@ -51,6 +51,7 @@ function NavBar() {
                 objectFit: "cover"  
               }} 
             />
+            </Link>
           </div>
           </div>
 
@@ -61,11 +62,11 @@ function NavBar() {
               style={{ fontSize: "30px", color: "black", marginRight: 10  }}
             />
             <Link to='/login'>
-              <UserOutlined style={{ fontSize: "25px", color: "black", marginRight: 10  }} />
+              <UserOutlined style={{ fontSize: "25px", color: "white", marginRight: 10  }} />
             </Link>
             <Button
               type="text"
-              icon={<MenuOutlined style={{ fontSize: '25px' }}/>}
+              icon={<MenuOutlined style={{ fontSize: '25px', color: "white" }}/>}
               onClick={showDrawer}
               style={{ padding: 0 }}
             />

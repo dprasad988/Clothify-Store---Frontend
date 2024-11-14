@@ -1,17 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import NewArrivalCard from './new-arrival-card';
-import { products } from './new-arrival';
 import { Button, Grid2, Typography } from '@mui/material';
 import AOS from 'aos';
+import { useGetProducts } from '../../../Api/product/getProductApi';
 
 function NewArrivals() {
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
+  
+  const {data: products = [], isLoading, isError} = useGetProducts();
+
+  const newProducts = products.filter(
+    product => product.isNewArrival === true 
+  );
+  
 
   return (
-    <div className='mb-3 py-1 m-2' style={{backgroundColor: '#FBE9E7',}}>
+    <div className='mb-3 py-1' style={{backgroundColor: '#FBE9E7',}}>
       <Typography variant="h4" align="center" className='mt-4' data-aos="fade-right" 
         style={{fontSize: '50px', fontWeight: 'bolder'}}
       >
@@ -20,7 +27,7 @@ function NewArrivals() {
       <p className='text-center'>Let's explore what is the new-in our store.</p>
 
       <Grid2 container spacing={2} justifyContent="center">
-        {products.map((product, index) => (
+        {newProducts.slice(0, 4).map((product, index) => (
           <Grid2 
             item 
             xs={12} 
@@ -33,13 +40,9 @@ function NewArrivals() {
             data-aos='slide-right'
             data-aos-delay={index * 100}
           >
-            <NewArrivalCard
-              image={product.image}
-              price={product.price}
-              name={product.name}
-              brand={product.brand}
-              inStock={product.inStock}
-            />
+            {/* // pass data to NewArrivalCard */}
+            <NewArrivalCard product={product} />
+
           </Grid2>
         ))}
       </Grid2>

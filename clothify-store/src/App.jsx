@@ -12,11 +12,18 @@ import { AuthProvider } from './Config/AuthContext';
 import PrivateRoute from './Config/PrivateRoute';
 import Profile from './UserComponent/userProfile/profile';
 import AddProduct from './AdminComponent/product/AddProduct';
+import MenCategory from './UserComponent/product-category/men-category';
+import ScrollToTop from './Config/ScrollToTop';
+import WomenCategory from './UserComponent/product-category/women-category';
+import KidsCategory from './UserComponent/product-category/kids-category';
+import TeensCategory from './UserComponent/product-category/teens-category';
+import AdminDashboard from './AdminComponent/dashboard/AdminDashboard';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ScrollToTop/>
         <Routes>
           {/* =====================User====================== */}
           <Route path="/" element={<Layout><Home /></Layout>} />
@@ -31,6 +38,13 @@ function App() {
             }
           />
           <Route path="/add" element={<AddProduct />} />
+          <Route path="/category-men" element={<Layout><MenCategory /></Layout>} />
+          <Route path="/category-women" element={<Layout><WomenCategory /></Layout>} />
+          <Route path="/category-kids" element={<Layout><KidsCategory /></Layout>} />
+          <Route path="/category-teens" element={<Layout><TeensCategory /></Layout>} />
+          <Route path='/admin' element={<AdminDashboard/>} />
+
+
 
           {/* =====================Admin====================== */}
 

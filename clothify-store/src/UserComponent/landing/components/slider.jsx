@@ -3,29 +3,29 @@ import { Carousel } from 'antd';
 
 function ImageSlider() {
   return (
-    <div style={{ width: '100%', marginTop: '10px'}}>
-      <Carousel autoplay autoplaySpeed={3000} pauseOnHover={false}>
+    <div className='mb-5' style={{ width: '100%', marginTop: '10px'}}>
+      <Carousel autoplay autoplaySpeed={6000} pauseOnHover={false}>
         <div>
           <img
-            src="home-cover.png"
+            src="home-cover3.png"
             alt="Image 1"
             style={{ width: '100%', height: 'auto' }}
           />
         </div>
         <div>
           <img
-            src="home-cover2.png"
+            src="home-cover4.png"
             alt="Image 2"
             style={{ width: '100%', height: 'auto' }}
           />
         </div>
-        <div>
+        {/* <div>
           <img
-            src="home-cover3.png"
+            src="home-cover.png"
             alt="Image 3"
             style={{ width: '100%', height: 'auto' }}
           />
-        </div>
+        </div> */}
       </Carousel>
     </div>
   );

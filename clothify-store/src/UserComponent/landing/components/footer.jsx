@@ -42,9 +42,20 @@ const Footer = () => {
             fullWidth
             sx={{ bgcolor: '#fff', mb: 2 }}
           />
-          <Button variant="contained" fullWidth>
-            SUBSCRIBE!
-          </Button>
+            <Button 
+                variant="contained" 
+                fullWidth 
+                sx={{
+                  backgroundColor: '#FF9800',
+                  color: '#FFFFFF', // Set text color if needed
+                  '&:hover': {
+                    backgroundColor: '#e68900', // Slightly darker color for hover effect
+                  }
+                }}
+              >
+              SUBSCRIBE!
+            </Button>
+
         </Grid2>
 
         {/* Quick Links */}

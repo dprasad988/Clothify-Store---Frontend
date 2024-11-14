@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -15,42 +15,79 @@ import {
   Typography
 } from '@mui/material';
 
-const Cart = ({ open, close }) => {
-  // Initial quantity state for each product
-  const [quantities, setQuantities] = useState({
-    1: 2, // Initial quantity for product with id 1
-    2: 1, // Initial quantity for product with id 2
-    3: 3, // Initial quantity for product with id 3
-  });
+  const Cart = ({ open, close }) => {
 
-  // Sample data for the table
-  const rows = [
-    { id: 1, brand: 'Modano', name: 'Modano Womens Modern Fit Long Sleeve Casual Top - Orange / XS', price: 20, image: 'https://zigzag.lk/cdn/shop/files/cottonshirts_26_470x.progressive.jpg?v=1728975573', description: 'This is a sample product description.' },
-    { id: 2, brand: 'Modano', name: 'Product 2', price: 40, image: 'https://via.placeholder.com/50', description: 'This is another sample description.' },
-    { id: 3, brand: 'Modano', name: 'Product 3', price: 15, image: 'https://via.placeholder.com/50', description: 'Yet another sample product description.' },
-  ];
+    const [rows, setRows] = useState([]);
 
-  // Function to handle quantity decrement for each product
-  const handleDecrement = (id) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [id]: Math.max(prevQuantities[id] - 1, 1),
-    }));
+    useEffect(() => {
+      if (open) {
+        const savedCart = JSON.parse(localStorage.getItem("cart"));
+        console.log("savedCart", savedCart);
+  
+        // Ensure that savedCart is an array
+        if (Array.isArray(savedCart)) {
+          setRows(savedCart);
+        } else if (savedCart && typeof savedCart === 'object') {
+          setRows([savedCart]); // Wrap single object in an array
+        } else {
+          setRows([]); // Default to an empty array if savedCart is undefined or null
+        }
+      }
+    }, [open]);
+    
+      // Remove item from cart
+    const handleRemove = (id, color, size) => {
+      const updatedRows = rows.filter(item => 
+        !(item.id === id && item.color === color && item.size === size)
+      );
+
+      setRows(updatedRows);
+      localStorage.setItem("cart", JSON.stringify(updatedRows));
+    };
+
+    // Handle quantity change
+    const handleQuantityChange = (row, increment) => {
+      const updatedRows = rows.map((item) => {
+        if (item.id === row.id && item.color === row.color && item.size === row.size) {
+          // Ensure quantity does not exceed availableQty and does not go below 1
+          const newQuantity = item.quantity + increment;
+          if (newQuantity <= item.availableQty && newQuantity >= 1) {
+            return { ...item, quantity: newQuantity };
+          }
+        }
+        return item;
+      });
+
+      setRows(updatedRows);
+      localStorage.setItem("cart", JSON.stringify(updatedRows));
+    };
+
+  const calculateTotal = () => {
+    return rows.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
-  // Function to handle quantity increment for each product
-  const handleIncrement = (id) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [id]: prevQuantities[id] + 1,
-    }));
-  };
+  const handleCheckout = async () => {
+    const orderData = {
+      status: "Pending",
+      date: "",
+      products: rows.map(row => ({
+        productId: row.id,
+        productName: row.name,
+        color: row.color,
+        size: row.size,
+        quantity: row.quantity,
+        totalPrice: row.price * row.quantity,
+      }))
+    };
 
-  // Calculate the grand total for all products
-  const grandTotal = rows.reduce(
-    (total, row) => total + row.price * (quantities[row.id] || 1),
-    0
-  );
+    try {
+      const response = await axios.post('/api/orders', orderData);
+      console.log("Order submitted successfully:", response.data);
+      close(); // Close the dialog after successful checkout
+    } catch (error) {
+      console.error("Error submitting order:", error);
+    }
+  };
 
   return (
     <div>
@@ -72,7 +109,7 @@ const Cart = ({ open, close }) => {
                     <TableCell sx={{ width: '450px' }}>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <img
-                          src={row.image}
+                          src={row.coverPhotoUrl}
                           alt={row.name}
                           style={{ marginRight: '10px', width: '70px', height: '80px' }}
                         />
@@ -92,7 +129,7 @@ const Cart = ({ open, close }) => {
                     <TableCell>
                       <div className="d-flex align-items-center">
                         <button
-                          onClick={() => handleDecrement(row.id)}
+                          onClick={() => row.quantity > 1 && handleQuantityChange(row, -1)}
                           className="text-center"
                           style={{ width: '30px', backgroundColor: 'lightblue', height: '30px' }}
                         >
@@ -107,18 +144,23 @@ const Cart = ({ open, close }) => {
                             height: '30px',
                           }}
                         >
-                          {quantities[row.id] || 1}
+                          {row.quantity}
                         </div>
                         <button
-                          onClick={() => handleIncrement(row.id)}
+                          onClick={() => row.quantity < row.availableQty && handleQuantityChange(row, 1)}
                           className="text-center"
                           style={{ width: '30px', backgroundColor: 'lightblue', height: '30px' }}
                         >
                           +
                         </button>
                       </div>
+                      <div>
+                        <button onClick={() => handleRemove(row.id, row.color, row.size)} style={{cursor: 'pointer', border: 'none'}}>
+                            remove
+                        </button>
+                      </div>
                     </TableCell>
-                    <TableCell>Rs. {(row.price * (quantities[row.id] || 1)).toFixed(2)}</TableCell>
+                    <TableCell>Rs. {(row.price * row.quantity).toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -126,17 +168,19 @@ const Cart = ({ open, close }) => {
           </TableContainer>
         </DialogContent>
         <DialogActions>
-        <div className="d-flex justify-content-between w-100 align-items-center">
-            <Typography variant="h6" color='red' sx={{ ml: 2 }}>Total: Rs. {grandTotal.toFixed(2)}</Typography>
+          <div className="d-flex justify-content-between w-100 align-items-center">
+            <Typography variant="h6" color="red" sx={{ ml: 2 }}>
+              Total: Rs. {calculateTotal().toFixed(2)}
+            </Typography>
             <div>
-            <Button onClick={close} color="primary" variant="outlined" sx={{ marginRight: '10px' }}>
+              <Button onClick={close} color="primary" variant="outlined" sx={{ marginRight: '10px' }}>
                 Close
-            </Button>
-            <Button color="primary" variant="contained" sx={{ marginRight: '15px' }}>
+              </Button>
+              <Button onClick={handleCheckout} color="primary" variant="contained" sx={{ marginRight: '15px' }}>
                 Checkout
-            </Button>
+              </Button>
             </div>
-        </div>
+          </div>
         </DialogActions>
       </Dialog>
     </div>
