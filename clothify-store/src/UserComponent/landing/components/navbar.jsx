@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, Drawer } from "antd";
 import { colors } from "../../../colors";
 import { Input, Select, Button } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined, HeartOutlined, MailOutlined, GlobalOutlined, HeartFilled } from "@ant-design/icons";
 import {
   SearchOutlined,
   ShoppingCartOutlined,
@@ -11,12 +11,16 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import {Link } from 'react-router-dom'
 import Cart from "../../cart/cart";
+import { Badge } from 'antd';
+import { useCart } from "../../cart/CartContext";
 
 const { Option } = Select;
 
 function NavBar() {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const { cartCount, updateCartCount } = useCart();
+
 
   const handleOpenCart = () => {
     setOpen(true);
@@ -58,11 +62,14 @@ function NavBar() {
           {/* Mobile Menu and Shopping Cart Icons (End of Screen) */}
           <div className="col-6 d-md-none d-flex justify-content-end align-items-center p-0 ml-auto pe-2">
 
-            <ShoppingCartOutlined
-              style={{ fontSize: "30px", color: "black", marginRight: 10  }}
-            />
+            <div className="me-3">
+              <Badge count={cartCount}>
+                <ShoppingCartOutlined style={{ fontSize: "30px", color: "white" }}/>
+              </Badge>
+            </div>  
+
             <Link to='/login'>
-              <UserOutlined style={{ fontSize: "25px", color: "white", marginRight: 10  }} />
+                <UserOutlined style={{ fontSize: "25px", color: "white", marginRight: 10  }} />
             </Link>
             <Button
               type="text"
@@ -86,13 +93,25 @@ function NavBar() {
 
           {/* My Account text for Desktop */}
           <div className="col-3 d-none d-md-flex justify-content-end align-items-center">
-            <div className="d-flex align-items-center me-3">
-              <span style={{ color: "black",fontSize: "20px" }}>My Account</span>
+            <div>
+              <div className="d-flex justify-content-center ">
+                {/* <span className="me-2" style={{ color: "red",fontSize: "14px", }}> <HeartFilled/></span>
+                <span className="me-2" style={{ color: "red",fontSize: "14px" }}> <MailOutlined/></span>
+                <span className="me-2" style={{ color: "white",fontSize: "14px" }}> <GlobalOutlined/></span>
+                <span className="me-2" style={{ color: "white",fontSize: "14px" }}> LKR </span> */}
+                <span style={{ color: "white",fontSize: "20px" }}>My Account</span>
+              </div>
             </div>
-            <Link to='/login'>
-              <UserOutlined style={{ fontSize: "25px", color: "#FF9800", marginRight: "10px" }}/>
-            </Link>
-            <ShoppingCartOutlined style={{ fontSize: "30px", color: "#FF9800" }} onClick={handleOpenCart}/>
+
+            <div className="px-3">
+              <Link to='/login'>
+                <UserOutlined style={{ fontSize: "25px", color: "#FF9800", marginRight: "15px" }}/>
+              </Link>
+              <Badge count={cartCount} overflowCount={99}>
+                <ShoppingCartOutlined style={{ fontSize: "30px", color: "#FF9800" }} onClick={handleOpenCart}/>
+              </Badge>
+            </div>
+
           </div>
 
         </div>
@@ -131,74 +150,91 @@ function NavBar() {
 
       {/* /////////////////////////Second navbar////////////////////////////////// */}
 
-      <div style={{
-            backgroundColor: colors.secondary,
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
-          }}
-          className="d-none d-md-flex"
-        >
-        <Menu
-          mode="horizontal"
-          style={{backgroundColor: colors.secondary , width: "100%", justifyContent: "center"}}
-        >
-          {/* Men SubMenu */}
-          <Menu.SubMenu
-            key="men-submenu"
-            title={
-              <span style={{ marginLeft: "10px" , color: "white", fontSize: "17px"}}>
-                Men 
-              </span>
-            }
+      <div
+        style={{
+          backgroundColor: colors.secondary,
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+        }}
+        className="d-none d-md-flex align-items-center"
+      >
+        {/* Container for Menu and Sign In section */}
+        <div className="d-flex justify-content-between align-items-center w-100" style={{marginLeft: '120px'}}>
+          {/* Centered Navigation Menu */}
+          <Menu
+            mode="horizontal"
+            style={{
+              backgroundColor: colors.secondary,
+              flexGrow: 1,
+              justifyContent: "center",
+              display: "flex",
+            }}
           >
-            <Menu.Item key="men-tshirt">T-Shirt</Menu.Item>
-            <Menu.Item key="men-shirt">Shirt</Menu.Item>
-            <Menu.Item key="men-jeans">Jeans</Menu.Item>
-          </Menu.SubMenu>
+            {/* Men SubMenu */}
+            <Menu.SubMenu
+              key="men-submenu"
+              title={
+                <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
+                  Men
+                </span>
+              }
+            >
+              <Menu.Item key="men-tshirt">T-Shirt</Menu.Item>
+              <Menu.Item key="men-shirt">Shirt</Menu.Item>
+              <Menu.Item key="men-jeans">Jeans</Menu.Item>
+            </Menu.SubMenu>
 
-          {/* Women SubMenu */}
-          <Menu.SubMenu
-            key="women-submenu"
-            title={
-              <span  style={{ marginLeft: "10px" , color: "white", fontSize: "17px"}}>
-                Women 
-              </span>
-            }
-          >
-            <Menu.Item key="women-tshirt">T-Shirt</Menu.Item>
-            <Menu.Item key="women-shirt">Shirt</Menu.Item>
-            <Menu.Item key="women-jeans">Jeans</Menu.Item>
-          </Menu.SubMenu>
+            {/* Women SubMenu */}
+            <Menu.SubMenu
+              key="women-submenu"
+              title={
+                <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
+                  Women
+                </span>
+              }
+            >
+              <Menu.Item key="women-tshirt">T-Shirt</Menu.Item>
+              <Menu.Item key="women-shirt">Shirt</Menu.Item>
+              <Menu.Item key="women-jeans">Jeans</Menu.Item>
+            </Menu.SubMenu>
 
-          {/* Kids & Baby SubMenu */}
-          <Menu.SubMenu
-            key="kids-baby-submenu"
-            title={
-              <span  style={{ marginLeft: "10px" , color: "white", fontSize: "17px"}}>
-                Kids 
-              </span>
-            }
-          >
-            <Menu.Item key="kids-tshirt">T-Shirt</Menu.Item>
-            <Menu.Item key="kids-shirt">Shirt</Menu.Item>
-            <Menu.Item key="kids-jeans">Jeans</Menu.Item>
-          </Menu.SubMenu>
+            {/* Kids SubMenu */}
+            <Menu.SubMenu
+              key="kids-baby-submenu"
+              title={
+                <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
+                  Kids
+                </span>
+              }
+            >
+              <Menu.Item key="kids-tshirt">T-Shirt</Menu.Item>
+              <Menu.Item key="kids-shirt">Shirt</Menu.Item>
+              <Menu.Item key="kids-jeans">Jeans</Menu.Item>
+            </Menu.SubMenu>
 
-          {/* Toys SubMenu */}
-          <Menu.SubMenu
-            key="toys-submenu"
-            title={
-              <span  style={{ marginLeft: "10px" , color: "white", fontSize: "17px"}}>
-                Toys
-              </span>
-            }
-          >
-            <Menu.Item key="toys-plush">Plush Toys</Menu.Item>
-            <Menu.Item key="toys-educational">Educational Toys</Menu.Item>
-            <Menu.Item key="toys-puzzles">Puzzles</Menu.Item>
-          </Menu.SubMenu>
-        </Menu>
+            {/* Toys SubMenu */}
+            <Menu.SubMenu
+              key="toys-submenu"
+              title={
+                <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
+                  Toys
+                </span>
+              }
+            >
+              <Menu.Item key="toys-plush">Plush Toys</Menu.Item>
+              <Menu.Item key="toys-educational">Educational Toys</Menu.Item>
+              <Menu.Item key="toys-puzzles">Puzzles</Menu.Item>
+            </Menu.SubMenu>
+          </Menu>
+
+          {/* End Section: Icon and Sign In */}
+          <div className="d-flex align-items-end me-4">
+            <LockOutlined style={{ color: "white", marginRight: "10px" }} />
+            <h6 className="text-white fw-normal mb-0" style={{cursor: 'pointer'}}>Sign up | Sign in</h6>
+          </div>
+
+        </div>
       </div>
-      
+            
       <Cart open={open} close={handleCloseCart}/>
     </div>
   );

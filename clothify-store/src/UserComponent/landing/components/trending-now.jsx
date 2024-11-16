@@ -4,7 +4,7 @@ import { Button, Grid2, Typography } from '@mui/material';
 import AOS from 'aos';
 import { useGetProducts } from '../../../Api/product/getProductApi';
 
-function NewArrivals() {
+function TrendingProducts() {
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -18,13 +18,13 @@ function NewArrivals() {
   
 
   return (
-    <div className='mb-3 py-1' style={{backgroundColor: '#FBE9E7',}}>
+    <div className='mb-3 py-1'>
       <Typography variant="h4" align="center" className='mt-4' data-aos="fade-right" 
         style={{fontSize: '50px', fontWeight: 'bolder'}}
       >
-        NEW ARRIVALS
+        TRENDING NOW
       </Typography>
-      <p className='text-center' data-aos="fade-left">Let's explore what is the new-in our store.</p>
+      <p className='text-center' data-aos="fade-left">Emphasizes exclusivity and current trends.</p>
 
       <Grid2 container spacing={2} justifyContent="center">
         {newProducts.slice(0, 4).map((product, index) => (
@@ -65,4 +65,4 @@ function NewArrivals() {
   );
 }
 
-export default NewArrivals;
+export default TrendingProducts

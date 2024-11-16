@@ -18,9 +18,7 @@ function SignIn({ onClose }) {
     };
     try{
       const data = await signinApi(values);
-      console.log('data', data);
       const { password: hashedPassword, token } = data;  
-      console.log(token);
 
       const isPasswordValid = bcrypt.compareSync(values.password, hashedPassword);
       if (isPasswordValid && token) {

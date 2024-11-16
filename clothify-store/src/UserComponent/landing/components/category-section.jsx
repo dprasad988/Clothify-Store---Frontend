@@ -18,9 +18,9 @@ function CategorySection() {
         <Typography variant="h4" align="center" className='mt-4' data-aos="fade-right" 
           style={{ fontSize: '50px', fontWeight: 'bolder' }}
         >
-          Choose By Categories
+          CHOOSE BY CATEGORIES
         </Typography>
-        <p className='text-center'>Discover the latest arrivals and exciting finds in our store!</p>
+        <p className='text-center' data-aos="fade-left">Discover the latest arrivals and exciting finds in our store!</p>
         </div>
 
       <Grid2 container spacing={2} sx={{ mt: 3 }}>

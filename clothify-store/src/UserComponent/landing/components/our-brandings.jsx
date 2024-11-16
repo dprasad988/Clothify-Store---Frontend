@@ -35,7 +35,7 @@ const BrandingSection = () => {
         >
           OUR BRANDINGS
         </Typography>
-        <p className='text-center'>Discover our brand with exclusive, fresh designs.</p>
+        <p className='text-center' data-aos="fade-left">Discover our brand with exclusive, fresh designs.</p>
         <div>
           <Grid container alignItems="center" justifyContent="space-between" spacing={2}>
             {/* Left Arrow */}

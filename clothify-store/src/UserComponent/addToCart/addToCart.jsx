@@ -10,6 +10,7 @@ import {
 import Grid from "@mui/material/Grid2";
 import { message } from "antd";
 import { handleBuyNow } from "../../Config/payherePayment";
+import { useCart } from "../cart/CartContext";
 
 function AddToCart({ open, close, product }) {
   const [selectedColor, setSelectedColor] = useState("Orange");
@@ -20,6 +21,9 @@ function AddToCart({ open, close, product }) {
   const [uniqueColors, setUniqueColors] = useState([]);
   const [availableQty, setAvailableQty] = useState(0);
   const [selectedVariantImages, setSelectedVariantImages] = useState([]);
+
+  const { cartCount, updateCartCount, } = useCart();
+
 
   useEffect(() => {
     const colors = [
@@ -113,6 +117,10 @@ function AddToCart({ open, close, product }) {
     }
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    const totalCount = existingCart.reduce((total, item) => total + item.quantity, 0);
+    updateCartCount(totalCount);
+
     message.success("Product item successfully added to cart");
     close();
   };

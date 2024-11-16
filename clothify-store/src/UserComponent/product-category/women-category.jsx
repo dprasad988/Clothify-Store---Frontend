@@ -51,8 +51,8 @@ function WomenCategory() {
         }}
       >
         <img
-          src="men-category.png"
-          alt="men-category"
+          src="women.png"
+          alt="women-category"
           style={{
             width: "100%",
             height: "100%",

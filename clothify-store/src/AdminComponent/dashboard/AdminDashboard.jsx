@@ -11,6 +11,7 @@ import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import ProductsTab from '../tabs/products-tab';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import OrderTable from '../orders/OrderTable';
+import Dashboard from './dashboard';
 
 
 const NAVIGATION = [
@@ -95,6 +96,8 @@ function AdminDashboard(props) {
             return <ProductsTab />
           case '/orders' : 
             return <OrderTable/>
+          case '/dashboard' :
+            return <Dashboard/>
             
           default:
             return <DemoPageContent pathname={pathname} />;

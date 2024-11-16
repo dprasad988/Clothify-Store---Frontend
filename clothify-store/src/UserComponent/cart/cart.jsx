@@ -14,15 +14,23 @@ import {
   Paper,
   Typography
 } from '@mui/material';
+import { useCart } from './CartContext';
+import { handleBuyFromCart } from '../../Config/payherePaymentCart';
 
   const Cart = ({ open, close }) => {
 
     const [rows, setRows] = useState([]);
+    const { cartCount, updateCartCount } = useCart();
+
+    const clearCart = () => {
+      localStorage.removeItem("cart");
+      setRows([]);
+      updateCartCount(0);
+    };
 
     useEffect(() => {
       if (open) {
         const savedCart = JSON.parse(localStorage.getItem("cart"));
-        console.log("savedCart", savedCart);
   
         // Ensure that savedCart is an array
         if (Array.isArray(savedCart)) {
@@ -35,15 +43,25 @@ import {
       }
     }, [open]);
     
-      // Remove item from cart
     const handleRemove = (id, color, size) => {
-      const updatedRows = rows.filter(item => 
-        !(item.id === id && item.color === color && item.size === size)
+      const itemToRemove = rows.find(
+        (item) => item.id === id && item.color === color && item.size === size
       );
-
-      setRows(updatedRows);
-      localStorage.setItem("cart", JSON.stringify(updatedRows));
+    
+      if (itemToRemove) {
+        const updatedRows = rows.filter(
+          (item) => !(item.id === id && item.color === color && item.size === size)
+        );
+    
+        setRows(updatedRows);
+        localStorage.setItem("cart", JSON.stringify(updatedRows));
+    
+        // Update the cart count by subtracting the quantity of the removed item
+        const newCartCount = cartCount - itemToRemove.quantity;
+        updateCartCount(newCartCount);
+      }
     };
+    
 
     // Handle quantity change
     const handleQuantityChange = (row, increment) => {
@@ -52,6 +70,10 @@ import {
           // Ensure quantity does not exceed availableQty and does not go below 1
           const newQuantity = item.quantity + increment;
           if (newQuantity <= item.availableQty && newQuantity >= 1) {
+
+            const newCartCount = cartCount + increment;
+            updateCartCount(newCartCount);
+            
             return { ...item, quantity: newQuantity };
           }
         }
@@ -69,7 +91,7 @@ import {
   const handleCheckout = async () => {
     const orderData = {
       status: "Pending",
-      date: "",
+      date: new Date().toISOString().split('T')[0],
       products: rows.map(row => ({
         productId: row.id,
         productName: row.name,
@@ -81,9 +103,10 @@ import {
     };
 
     try {
-      const response = await axios.post('/api/orders', orderData);
-      console.log("Order submitted successfully:", response.data);
-      close(); // Close the dialog after successful checkout
+      
+      await handleBuyFromCart(orderData, close, clearCart);
+
+      // close(); // Close the dialog after successful checkout
     } catch (error) {
       console.error("Error submitting order:", error);
     }

@@ -8,23 +8,14 @@ import {
   TableRow,
   Paper,
   Typography,
-  Box,
-  Select,
-  MenuItem
+  Box
 } from '@mui/material';
-import orderData from './orderData';
+import orderData from '../../AdminComponent/orders/orderData';
 import { useGetOrders } from '../../Api/order/getOrdersApi';
 
-function OrderTable() {
+function CustomerOrders() {
   const [orders, setOrders] = useState(orderData);
   const {data, isLoading, isError} = useGetOrders();
-
-  useEffect(() => {
-
-    if (data) {
-        setOrders(data);
-    }
-  }, [data])
 
   // Helper function to determine color based on order status
   const getStatusColor = (status) => {
@@ -40,17 +31,16 @@ function OrderTable() {
     }
   };
 
-  // Function to handle status update
-  const handleStatusChange = (orderId, newStatus) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.orderId === orderId
-          ? { ...order, status: newStatus }
-          : order
-      )
-    );
-  };
+  useEffect(() => {
+    const cus_id = localStorage.getItem('cus_id')
 
+    if (data && cus_id) {
+        const filteredData = data.filter((order) => String(order.cusId) === cus_id);
+        setOrders(filteredData);
+    }
+  }, [data])
+  
+  
   return (
     <Box sx={{ maxWidth: { xs: 380, sm: '100%' }, bgcolor: '#b0b0b0', p: 3 }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
@@ -90,17 +80,14 @@ function OrderTable() {
                   <TableCell>{product.totalPrice}</TableCell>
                   <TableCell>{order.date}</TableCell>
                   <TableCell>
-                    <Select
-                      value={order.status}
-                      size='small'
-                      onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-                      sx={{ color: getStatusColor(order.status), fontWeight: 'bold' }}
+                    <Typography
+                      sx={{
+                        color: getStatusColor(order.status),
+                        fontWeight: 'bold'
+                      }}
                     >
-                      <MenuItem value="Pending">Pending</MenuItem>
-                      <MenuItem value="Processing">Processing</MenuItem>
-                      <MenuItem value="Shipped">Shipped</MenuItem>
-                      <MenuItem value="Delivered">Delivered</MenuItem>
-                    </Select>
+                      {order.status}
+                    </Typography>
                   </TableCell>
                 </TableRow>
               ))
@@ -112,4 +99,4 @@ function OrderTable() {
   );
 }
 
-export default OrderTable;
+export default CustomerOrders;

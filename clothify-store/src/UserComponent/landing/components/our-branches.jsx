@@ -11,7 +11,7 @@ function OurBranches() {
         >
                 OUR BRANCHES
         </Typography>
-        <p className='text-center'>See the latest arrivals at a store near you!</p>
+        <p className='text-center' data-aos="fade-left">See the latest arrivals at a store near you!</p>
         </div>
     
         <Grid2 container spacing={2} sx={{ marginLeft: '10px', marginRight: '10px'}}>

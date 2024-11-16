@@ -10,7 +10,7 @@ import Layout from './UserComponent/layout/layout';
 import SignUp from './UserComponent/signup/sign-up';
 import { AuthProvider } from './Config/AuthContext';
 import PrivateRoute from './Config/PrivateRoute';
-import Profile from './UserComponent/userProfile/profile';
+import Profile from './UserComponent/userProfile/profileHome';
 import AddProduct from './AdminComponent/product/AddProduct';
 import MenCategory from './UserComponent/product-category/men-category';
 import ScrollToTop from './Config/ScrollToTop';
@@ -18,10 +18,13 @@ import WomenCategory from './UserComponent/product-category/women-category';
 import KidsCategory from './UserComponent/product-category/kids-category';
 import TeensCategory from './UserComponent/product-category/teens-category';
 import AdminDashboard from './AdminComponent/dashboard/AdminDashboard';
+import { CartProvider } from './UserComponent/cart/CartContext';
+import Invoice from './UserComponent/invoice/Invoice';
 
 function App() {
   return (
     <BrowserRouter>
+    <CartProvider>
       <AuthProvider>
         <ScrollToTop/>
         <Routes>
@@ -43,7 +46,7 @@ function App() {
           <Route path="/category-kids" element={<Layout><KidsCategory /></Layout>} />
           <Route path="/category-teens" element={<Layout><TeensCategory /></Layout>} />
           <Route path='/admin' element={<AdminDashboard/>} />
-
+          <Route path='/invoice' element={<Invoice/>} />
 
 
           {/* =====================Admin====================== */}
@@ -52,6 +55,7 @@ function App() {
           {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </AuthProvider>
+      </CartProvider>
     </BrowserRouter>
   );
 }

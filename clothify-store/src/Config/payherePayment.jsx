@@ -2,8 +2,9 @@ import { message } from "antd";
 import { loadPayHere } from "./payhereLoader"; 
 import { AddOrderApi } from "../Api/order/addOrderApi";
 import { UpdateProductQuantityApi } from "../Api/order/updateProductQtyApi";
+import { UpdatePaidApi } from "../Api/order/updatePaidApi"
 
-export const handleBuyNow = async (product, selectedColor, selectedSize, quantity, totalPrice, close) => {
+export const handleBuyNow = async (product, selectedColor, selectedSize, quantity, totalPrice, close,) => {
 
   const orderData = {
     status: "Pending",  
@@ -52,7 +53,6 @@ export const handleBuyNow = async (product, selectedColor, selectedSize, quantit
 
       // Set up PayHere callbacks
       payhere.onCompleted = async (paymentOrderId) => {
-        console.log(`Payment successful. Order ID: ${paymentOrderId}`);
         message.success(`Payment successful. Order ID: ${paymentOrderId}`);
 
         try {
@@ -60,9 +60,21 @@ export const handleBuyNow = async (product, selectedColor, selectedSize, quantit
             productId: product.productId,
             quantity: quantity,       
             color: selectedColor,         
-            size: selectedSize 
-          }); 
+            size: selectedSize,
+          });
 
+          const isPaymentUpdated = await UpdatePaidApi({
+            orderId : paymentOrderId,
+            isPaid: true,
+          })
+                    
+          if(isPaymentUpdated){
+            message.success("Payment updated successfully.");
+          }
+          else if(!isPaymentUpdated){
+            message.error("Failed to update payment.");
+          }
+          
           if(isSuccess){
             message.success("Product quantity updated successfully.");
           }
@@ -74,13 +86,14 @@ export const handleBuyNow = async (product, selectedColor, selectedSize, quantit
           console.error("Failed to update product quantity:", error);
           message.error("Failed to update product quantity.");
         }
-
-        close();  // Close the payment modal or process
+        window.location.href = `http://localhost:5173/invoice?orderId=${paymentOrderId}`;
+        close(); 
       };
 
       payhere.onDismissed = () => {
         console.log("Payment dismissed");
         message.info("Payment dismissed");
+        close(); 
       };
 
       payhere.onError = (error) => {
@@ -99,4 +112,5 @@ export const handleBuyNow = async (product, selectedColor, selectedSize, quantit
   } else {
     message.error("Order failed");
   }
+
 };
