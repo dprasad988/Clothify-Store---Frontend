@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Form, Input, Button, message, Avatar } from "antd";
 import { GetProfileApi } from "../../Api/profile/GetProfileApi";
-import ProfileDashboard from "./profileDashboard";
+import { UpdateProfileApi } from "../../Api/profile/updateProfileApi";
+import axios from "axios";
 
 function Profile() {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [cusId, setCusId] = useState(null);
 
 
   const sampleProfileData = {
@@ -33,11 +35,13 @@ function Profile() {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
+          cus_id: data.cus_id,
         });
         if (data.profilePicture) {
           setImageUrl(data.profilePicture);
         }
         if(data.cus_id){
+          setCusId(data.cus_id);
           localStorage.setItem("cus_id", data.cus_id);
         }
 
@@ -50,11 +54,67 @@ function Profile() {
     fetchProfileData();
   }, [form]);
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log("Form Submitted:", values);
-    // Here, you can handle the submission of the form, like sending data to the server
-    message.success("Profile updated successfully");
+    const updatedProfile = {
+      ...values,
+      cus_id: cusId, 
+      profilePicture: imageUrl,  
+    };
+
+    try {
+      await UpdateProfileApi(updatedProfile);
+      message.success("Profile updated successfully");
+    } catch (error) {
+      message.error("Failed to update profile");
+    }
   };
+
+  const handleAvatarClick = () => {
+    document.getElementById("fileInput").click();
+  };
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "ClothifyStore");
+
+    try {
+        const response = await axios.post(
+            `https://api.cloudinary.com/v1_1/dvw0hnvbs/image/upload`,
+            formData
+        );
+        return response.data.secure_url;
+    } catch (error) {
+        console.error("Error uploading image:", error);
+        throw error;
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImageUrl(imageUrl);
+  
+      try {
+        const uploadedImageUrl = await uploadImage(file);
+  
+        if (uploadedImageUrl) {
+          message.success("Profile picture uploaded successfully");
+  
+          form.setFieldsValue({ profilePicture: uploadedImageUrl });
+  
+          setImageUrl(uploadedImageUrl);
+  
+        }
+      } catch (error) {
+        message.error("Failed to upload the profile picture. Please try again.");
+      }
+    }
+  };
+  
+  
 
   return (
     <div
@@ -75,13 +135,27 @@ function Profile() {
           firstName: sampleProfileData.firstName,
           lastName: sampleProfileData.lastName,
           email: sampleProfileData.email,
+          profilePicture: sampleProfileData.profilePicture,
         }}
       >
         {/* Profile Picture */}
         <Form.Item>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Avatar src={imageUrl} size={100} style={{ marginBottom: 10 }} />
+            <Avatar
+              src={imageUrl}
+              size={100}
+              style={{ marginBottom: 10, cursor: "pointer" }}
+              onClick={handleAvatarClick}
+            />
           </div>
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
         </Form.Item>
 
         {/* First Name */}
@@ -111,7 +185,7 @@ function Profile() {
             { type: "email", message: "The input is not valid E-mail!" },
           ]}
         >
-          <Input />
+          <Input disabled/>
         </Form.Item>
 
         {/* Submit Button */}

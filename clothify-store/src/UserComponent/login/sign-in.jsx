@@ -18,11 +18,11 @@ function SignIn({ onClose }) {
     };
     try{
       const data = await signinApi(values);
-      const { password: hashedPassword, token } = data;  
+      const { password: hashedPassword, token, ...user } = data;  
 
       const isPasswordValid = bcrypt.compareSync(values.password, hashedPassword);
       if (isPasswordValid && token) {
-        login(token); 
+        login(token, user); 
         // message.success('Successfully logged in.');
       } else {
         console.error('Invalid password');

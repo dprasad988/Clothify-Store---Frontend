@@ -12,30 +12,7 @@ import ProductsTab from '../tabs/products-tab';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import OrderTable from '../orders/OrderTable';
 import Dashboard from './dashboard';
-
-
-const NAVIGATION = [
-  {
-    segment: 'dashboard',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
-  },
-  {
-    segment: 'products',
-    title: 'Products',
-    icon: <InventoryIcon />,
-  },
-  {
-    segment: 'reports',
-    title: 'Reports',
-    icon: <BarChartIcon />,
-  },
-];
+import Badge from 'antd/lib/badge';
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -75,6 +52,7 @@ DemoPageContent.propTypes = {
 
 function AdminDashboard(props) {
   const { window } = props;
+  const [orderCount, setOrderCount] = React.useState(5);
 
   const [pathname, setPathname] = React.useState('/dashboard');
 
@@ -88,6 +66,33 @@ function AdminDashboard(props) {
 
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
+
+  const NAVIGATION = [
+    {
+      segment: 'dashboard',
+      title: 'Dashboard',
+      icon: <DashboardIcon />,
+    },
+    {
+      segment: 'orders',
+      title: 'Orders',
+      icon: (
+        <Badge count={orderCount} offset={[2, 0]}>
+          <ShoppingCartIcon />
+        </Badge>
+      ),
+    },
+    {
+      segment: 'products',
+      title: 'Products',
+      icon: <InventoryIcon />,
+    },
+    {
+      segment: 'reports',
+      title: 'Reports',
+      icon: <BarChartIcon />,
+    },
+  ];
 
     // Define the content to render based on the current route
     const renderContent = () => {

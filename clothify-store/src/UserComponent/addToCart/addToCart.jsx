@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Box,
@@ -9,64 +9,72 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { message } from "antd";
-import { handleBuyNow } from "../../Config/payherePayment";
 import { useCart } from "../cart/CartContext";
+import { useNavigate } from "react-router-dom";
 
 function AddToCart({ open, close, product }) {
   const [selectedColor, setSelectedColor] = useState("Orange");
   const [selectedSize, setSelectedSize] = useState("XS");
   const [quantity, setQuantity] = useState(1);
   const [availableSizes, setAvailableSizes] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(product.price);
-  const [uniqueColors, setUniqueColors] = useState([]);
-  const [availableQty, setAvailableQty] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(product.price);
+  // const [uniqueColors, setUniqueColors] = useState([]);
+  // const [availableQty, setAvailableQty] = useState(0);
   const [selectedVariantImages, setSelectedVariantImages] = useState([]);
+  const navigate = useNavigate();
 
-  const { cartCount, updateCartCount, } = useCart();
+  const { cartCount, updateCartCount, setBillingData } = useCart();
 
+  const uniqueColors = useMemo(
+    () => [...new Set(product.variants?.map((variant) => variant.color))],
+    [product.variants]
+  );
 
+  // Update available sizes and images when the selected color changes
   useEffect(() => {
-    const colors = [
-      ...new Set(product.variants.map((variant) => variant.color)),
-    ];
-    setUniqueColors(colors.filter((color) => color));
-    if (colors.length > 0) {
-      setSelectedColor(colors[0]); // Set the initial color to the first one
-    }
-  }, [product.variants]);
+    if (!selectedColor || !product.variants) return;
 
-  useEffect(() => {
     const selectedVariants = product.variants.filter(
       (variant) => variant.color === selectedColor
     );
-    const sizes = [...new Set(selectedVariants.map((variant) => variant.size))];
-    setAvailableSizes(sizes);
-    setSelectedSize(sizes.length > 0 ? sizes[0] : ""); // Set initial size based on selected color
-    
-    // Find the first variant with images for the selected color
-    const variantWithImages = selectedVariants.find((variant) => variant.imageUrl && variant.imageUrl.length > 0);
-    
-    if (variantWithImages) {
-      setSelectedVariantImages(variantWithImages.imageUrl);
-    } else {
-      setSelectedVariantImages([]); // Clear images if no variant matches the selected color
-    }
+    setAvailableSizes(
+      [...new Set(selectedVariants.map((variant) => variant.size))] || []
+    );
+
+    // Update images for the selected color
+    const variantWithImages = selectedVariants.find(
+      (variant) => variant.imageUrl && variant.imageUrl.length > 0
+    );
+    setSelectedVariantImages(variantWithImages?.imageUrl || []);
   }, [selectedColor, product.variants]);
 
-  // Update available quantity based on selected size
-  useEffect(() => {
-    const selectedVariant = product.variants.find(
+  // Calculate available quantity and reset quantity when size changes
+  const availableQty = useMemo(() => {
+    const selectedVariant = product.variants?.find(
       (variant) =>
         variant.color === selectedColor && variant.size === selectedSize
     );
-    const qty = selectedVariant ? selectedVariant.quantity : 0;
-    setAvailableQty(qty);
-    setQuantity(1); // Reset quantity when changing color or size
+    return selectedVariant?.quantity || 0;
   }, [selectedColor, selectedSize, product.variants]);
 
+  // Auto-select the first color and size when the dialog opens
   useEffect(() => {
-    setTotalPrice(product.price * quantity);
-  }, [quantity, product.price]);
+    if (uniqueColors.length) {
+      setSelectedColor(uniqueColors[0]);
+    }
+  }, [uniqueColors]);
+
+  useEffect(() => {
+    if (availableSizes.length) {
+      setSelectedSize(availableSizes[0]);
+    }
+  }, [availableSizes]);
+
+  // Calculate the total price directly
+  const totalPrice = useMemo(
+    () => product.price * quantity,
+    [product.price, quantity]
+  );
 
   const handleColorChange = (colorName) => {
     setSelectedColor(colorName);
@@ -95,6 +103,7 @@ function AddToCart({ open, close, product }) {
       price: product.price,
       availableQty: availableQty,
       coverPhotoUrl: product.coverPhotoUrl,
+      billingId: null,
     };
 
     let existingCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -118,10 +127,37 @@ function AddToCart({ open, close, product }) {
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
 
-    const totalCount = existingCart.reduce((total, item) => total + item.quantity, 0);
+    const totalCount = existingCart.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
     updateCartCount(totalCount);
 
     message.success("Product item successfully added to cart");
+    close();
+  };
+
+  const handlePassAddToCart = () => {
+    const orderData = {
+      status: "Pending",
+      date: new Date().toISOString().split("T")[0],
+      products: [
+        {
+          productId: product.productId,
+          productName: product.productName,
+          color: selectedColor,
+          size: selectedSize,
+          quantity: quantity,
+          totalPrice: totalPrice,
+          coverPhotoUrl: product.coverPhotoUrl,
+          billingId: null,
+        },
+      ],
+    };
+
+    // setAddToCartData({buyNowOrderData, close})
+    setBillingData({ orderData, close });
+    navigate("/billing");
     close();
   };
 
@@ -267,8 +303,8 @@ function AddToCart({ open, close, product }) {
                   </div>
                 </div>
                 <div className="d-flex">
-                <button
-                    onClick={() => handleBuyNow(product, selectedColor, selectedSize, quantity, totalPrice, close)}
+                  <button
+                    onClick={handlePassAddToCart}
                     className="mt-4 btn btn-primary w-100 me-3"
                   >
                     Buy Now

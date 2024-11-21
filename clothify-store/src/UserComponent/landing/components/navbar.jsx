@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Menu, Drawer } from "antd";
 import { colors } from "../../../colors";
 import { Input, Select, Button } from "antd";
@@ -13,6 +13,7 @@ import {Link } from 'react-router-dom'
 import Cart from "../../cart/cart";
 import { Badge } from 'antd';
 import { useCart } from "../../cart/CartContext";
+import { AuthContext } from "../../../Config/AuthContext";
 
 const { Option } = Select;
 
@@ -20,7 +21,7 @@ function NavBar() {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const { cartCount, updateCartCount } = useCart();
-
+  const { userData, logout, } = useContext(AuthContext);
 
   const handleOpenCart = () => {
     setOpen(true);
@@ -99,14 +100,12 @@ function NavBar() {
                 <span className="me-2" style={{ color: "red",fontSize: "14px" }}> <MailOutlined/></span>
                 <span className="me-2" style={{ color: "white",fontSize: "14px" }}> <GlobalOutlined/></span>
                 <span className="me-2" style={{ color: "white",fontSize: "14px" }}> LKR </span> */}
-                <span style={{ color: "white",fontSize: "20px" }}>My Account</span>
+                <span style={{ color: "white",fontSize: "20px" }}>{userData?.firstName ? `Hi, ${userData.firstName}` : 'My Account'}</span>
               </div>
             </div>
 
             <div className="px-3">
-              <Link to='/login'>
                 <UserOutlined style={{ fontSize: "25px", color: "#FF9800", marginRight: "15px" }}/>
-              </Link>
               <Badge count={cartCount} overflowCount={99}>
                 <ShoppingCartOutlined style={{ fontSize: "30px", color: "#FF9800" }} onClick={handleOpenCart}/>
               </Badge>
@@ -229,7 +228,10 @@ function NavBar() {
           {/* End Section: Icon and Sign In */}
           <div className="d-flex align-items-end me-4">
             <LockOutlined style={{ color: "white", marginRight: "10px" }} />
-            <h6 className="text-white fw-normal mb-0" style={{cursor: 'pointer'}}>Sign up | Sign in</h6>
+            <Link to='/login' style={{ textDecoration: 'none' }}>
+              <h6 className="text-white fw-normal mb-0" style={{cursor: 'pointer'}}>Sign in  &nbsp;| &nbsp;</h6>
+            </Link>
+              <h6 onClick={logout} className="text-white fw-normal mb-0" style={{cursor: 'pointer'}}>Log out</h6>
           </div>
 
         </div>

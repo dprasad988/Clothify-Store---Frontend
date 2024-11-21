@@ -32,13 +32,19 @@ function CustomerOrders() {
   };
 
   useEffect(() => {
-    const cus_id = localStorage.getItem('cus_id')
-
+    const cus_id = localStorage.getItem('cus_id');
+  
     if (data && cus_id) {
-        const filteredData = data.filter((order) => String(order.cusId) === cus_id);
-        setOrders(filteredData);
+      // Filter orders by customer ID
+      const filteredData = data.filter((order) => String(order.cusId) === cus_id);
+      
+      // Sort orders by orderId in descending order
+      const sortedOrders = filteredData.sort((a, b) => b.orderId - a.orderId);
+  
+      setOrders(sortedOrders);
     }
-  }, [data])
+  }, [data]);
+  
   
   
   return (
@@ -46,39 +52,54 @@ function CustomerOrders() {
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Order Details
       </Typography>
-      <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto' }}>
-        <Table>
+      <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto', maxHeight: 440 }}>
+        <Table stickyHeader>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{backgroundColor: '#f9f9f9'}}>
               <TableCell>Order ID</TableCell>
               <TableCell>Product</TableCell>
-              <TableCell>Product Name</TableCell>
-              <TableCell>Color</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>Quantity</TableCell>
-              <TableCell>Price</TableCell>
+              <TableCell>Total Price</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) =>
-              order.products.map((product) => (
+            {orders.map((order) => {
+              const totalOrderPrice = order.products.reduce(
+                (sum, product) => sum + product.totalPrice,
+                0
+              );
+            
+              return order.products.map((product, index) => (
                 <TableRow key={`${order.orderId}-${product.productId}`}>
-                  <TableCell>{order.orderId}</TableCell>
-                  <TableCell>
-                    <img
-                      src={product.coverPhotoUrl}
-                      alt={product.productName}
-                      style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                    />
+                  <TableCell>{index === 0 && (
+                      <div rowSpan={order.products.length}>{order.orderId}</div>
+                    )}
                   </TableCell>
-                  <TableCell>{product.productName}</TableCell>
-                  <TableCell>{product.color}</TableCell>
-                  <TableCell>{product.size}</TableCell>
-                  <TableCell>{product.quantity}</TableCell>
-                  <TableCell>{product.totalPrice}</TableCell>
-                  <TableCell>{order.date}</TableCell>
+                  <TableCell>
+                    <div className='d-flex'>
+                      <div>
+                        <img
+                          src={product.coverPhotoUrl}
+                          alt={product.productName}
+                          style={{ width: '70px', height: '80px', objectFit: 'cover', borderRadius: '0 10px 10px 10px' }}
+                        />
+                      </div>
+                      <div className='ms-3'>
+                        {product.productName}<br/>
+                        {product.color} |  {product.size}<br/>
+                        {product.quantity}<br/>
+                        Rs. {product.totalPrice}.00
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{index === 0 && (
+                      <div rowSpan={order.products.length}><strong>Rs. {totalOrderPrice}.00</strong></div>
+                    )}
+                  </TableCell>
+                  <TableCell>{index === 0 && (
+                      <div rowSpan={order.products.length}>{order.date}</div>
+                    )}</TableCell>
                   <TableCell>
                     <Typography
                       sx={{
@@ -91,7 +112,7 @@ function CustomerOrders() {
                   </TableCell>
                 </TableRow>
               ))
-            )}
+            })}
           </TableBody>
         </Table>
       </TableContainer>

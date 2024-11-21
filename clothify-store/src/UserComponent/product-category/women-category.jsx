@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Avatar, Typography , Pagination} from "antd";
+import { Row, Col, Avatar, Typography , Pagination, Select, Slider} from "antd";
 import menSubCategories from "./menSubCategoryData";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -21,22 +21,60 @@ function WomenCategory() {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [subCategories, setSubCategories] = useState(menSubCategories)
+    const [subCategoryNames, setSubCategoryNames] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(12);
     const [hoveredIndex, setHoveredIndex] = useState(null);
+      // Filter states
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+    const [selectedBrand, setSelectedBrand] = useState(null);
+    const [priceRange, setPriceRange] = useState([0, 50000]);
+    const [sortOption, setSortOption] = useState(null);
 
     const womenProducts = products.filter(product => 
       Array.isArray(product.categoryName) && product.categoryName.includes("Women")
     );
 
-    const paginatedProducts = womenProducts.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
+     // Get unique subCategoryName values
+     useEffect(() => {
+      const uniqueSubCategories = [
+        ...new Set(womenProducts.map((product) => product.subCategoryName)),
+      ];
+  
+      setSubCategoryNames(uniqueSubCategories);
+    }, [womenProducts]);
+
+      // Filter logic
+      const filteredProducts = womenProducts.filter((product) => {
+      const matchesSubCategory = !selectedSubCategory || product.subCategoryName === selectedSubCategory;
+      const matchesBrand = !selectedBrand || product.brand === selectedBrand;
+      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+
+      return matchesSubCategory && matchesBrand && matchesPrice;
+    });
+
+    // Sort logic
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
+      if (sortOption === "priceAsc") {
+        return a.price - b.price;
+      } else if (sortOption === "priceDesc") {
+        return b.price - a.price;
+      }
+      return 0;
+    });
+
+    const paginatedProducts = sortedProducts.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize
     );
 
     const handlePageChange = (page, pageSize) => {
         setCurrentPage(page);
         setPageSize(pageSize);
+    };
+    
+    const handlePriceChange = (value) => {
+      setPriceRange(value);
     };
 
   return (
@@ -96,11 +134,99 @@ function WomenCategory() {
         <div style={{backgroundColor: 'black', height: '50px', width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center'}}>
         <h5 style={{ color: 'white', textAlign: 'center' ,  fontSize: isMobile ? "15px" : "20px"}}>
             <span style={{ borderBottom: '2px solid white', paddingBottom: '5px' }}>
-                CHECK OUT THE CLOTHIFY MEN'S COLLECTION!
+                CHECK OUT THE CLOTHIFY WOMEN'S COLLECTION!
             </span>
         </h5>
         </div>
       </div>
+
+
+    {/* Filters */}
+    <Row
+          gutter={[16, 16]}
+          justify="center"
+          style={{ margin: "20px 0", padding: "0 10px" }}
+        >
+          <Col xs={24} sm={8} md={6}>
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Select Subcategory"
+              onChange={(value) => {
+                setSelectedSubCategory(value);
+                setCurrentPage(1); // Reset to first page
+              }}
+              allowClear
+            >
+              {subCategoryNames.map((sub) => (
+                <Select.Option key={sub} value={sub}>
+                  {sub}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xs={24} sm={8} md={6}>
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Select Brand"
+              onChange={(value) => {
+                setSelectedBrand(value);
+                setCurrentPage(1); // Reset to first page
+              }}
+              allowClear
+            >
+              {Array.from(
+                new Set(womenProducts.map((product) => product.brand))
+              ).map((brand) => (
+                <Select.Option key={brand} value={brand}>
+                  {brand}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xs={24} sm={8} md={6}>
+            <Slider
+              range
+              min={0}
+              max={50000}
+              value={priceRange}
+              onChange={handlePriceChange}
+              tooltip={{ formatter: (value) => `Rs ${value}` }}
+            />
+          </Col>
+        </Row>
+{/* //////////////////////////////////////////////////////////////////////////////// */}
+      <Row
+        gutter={[16, 16]}
+        justify="center"
+        align="middle"
+        style={{
+          borderBottom: "1px solid #ddd",
+          marginBottom: "20px",
+          margin: "20px 0", padding: "0 10px 20px 10px"
+        }}
+      >
+
+        {/* Sort Dropdown */}
+        <Col xs={24} sm={8} md={6}>
+          <Select
+            style={{ width: "100%" }}
+            placeholder="Sort by Price"
+            onChange={(value) => setSortOption(value)}
+            allowClear
+          >
+            <Select.Option value="priceAsc">Price: Low to High</Select.Option>
+            <Select.Option value="priceDesc">Price: High to Low</Select.Option>
+          </Select>
+        </Col>
+
+        {/* Product Count */}
+        <Col xs={24} sm={8} md={12} style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Typography.Title level={5}>
+            Showing {filteredProducts.length} products
+          </Typography.Title>
+        </Col>
+
+      </Row>
 
       {/* Men Products */}
     <div>
@@ -129,7 +255,7 @@ function WomenCategory() {
                 <Pagination
                     current={currentPage}
                     pageSize={pageSize}
-                    total={womenProducts.length}
+                    total={filteredProducts.length}
                     onChange={handlePageChange}
                     showSizeChanger={false}
                 />

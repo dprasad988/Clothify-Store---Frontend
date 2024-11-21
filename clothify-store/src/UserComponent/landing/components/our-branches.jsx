@@ -7,7 +7,7 @@ function OurBranches() {
     <div className='m-3 py-4'style={{backgroundColor: '#FBE9E7'}}>
         <div className='mb-3' >
         <Typography variant="h4" align="center" className='mt-2' data-aos="fade-right" 
-            style={{fontSize: '50px', fontWeight: 'bolder'}}
+            style={{fontSize: '50px', fontWeight: 'bolder', }}
         >
                 OUR BRANCHES
         </Typography>

@@ -4,24 +4,25 @@ import { AddOrderApi } from "../Api/order/addOrderApi";
 import { UpdateProductQuantityApi } from "../Api/order/updateProductQtyApi";
 import { UpdatePaidApi } from "../Api/order/updatePaidApi"
 
-export const handleBuyNow = async (product, selectedColor, selectedSize, quantity, totalPrice, close,) => {
+export const handleBuyNow = async (buyNowOrderData, close, billingId) => {
 
-  const orderData = {
-    status: "Pending",  
-    date: new Date().toISOString().split('T')[0],
-    products: [
-      {
-        productId: product.productId,
-        productName: product.productName,
-        color: selectedColor,
-        size: selectedSize,
-        quantity: quantity,
-        totalPrice: totalPrice
-      }
-    ]
-  };
+  // const orderData = {
+  //   status: "Pending",  
+  //   date: new Date().toISOString().split('T')[0],
+  //   billingId: billingId,
+  //   products: [
+  //     {
+  //       productId: product.productId,
+  //       productName: product.productName,
+  //       color: selectedColor,
+  //       size: selectedSize,
+  //       quantity: quantity,
+  //       totalPrice: totalPrice
+  //     }
+  //   ]
+  // };
 
-  const data = await AddOrderApi(orderData);
+  const data = await AddOrderApi(buyNowOrderData);
 
   if (data) {
     const { hash, orderId } = data;

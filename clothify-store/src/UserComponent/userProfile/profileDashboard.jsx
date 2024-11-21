@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { Layout, Menu, Avatar, Typography, Card, Button, Drawer } from 'antd';
-import { UserOutlined, ShoppingCartOutlined, SettingOutlined, LogoutOutlined, MenuOutlined } from '@ant-design/icons';
+import { UserOutlined, ShoppingCartOutlined, SettingOutlined, LogoutOutlined, MenuOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@mui/material';  
-import Profile from './profile';
 import { AuthContext } from "../../Config/AuthContext";
 import CustomerOrders from './customerOrders';
+import DeliveryAddress from './delivaryAddress';
+import Profile from './Profile';
+
 
 const { Sider, Content } = Layout;
 const { Title } = Typography;
@@ -14,7 +16,7 @@ function ProfileDashboard({profileData}) {
   const [drawerVisible, setDrawerVisible] = useState(false); 
   const isMobile = useMediaQuery('(max-width:768px)'); 
 
-  const { logout } = useContext(AuthContext);
+  const { logout, userData } = useContext(AuthContext);
 
   const handleMenuClick = (e) => {
     setSelectedMenu(e.key);
@@ -39,11 +41,17 @@ function ProfileDashboard({profileData}) {
         );
       case '3':
         return (
+          <Card title="Delivary Address" style={{ marginTop: 0 }}>
+            <DeliveryAddress/>
+          </Card>
+        );
+      case '4':
+        return (
           <Card title="Settings" style={{ marginTop: 0 }}>
             <p>Configure your account settings here.</p>
           </Card>
         );
-      case '4':
+      case '5':
         return (
           <Card title="Log Out" style={{ marginTop: 0 }}>
             <p>Are you sure you want to log out?</p>
@@ -78,10 +86,13 @@ function ProfileDashboard({profileData}) {
           <Menu.Item key="2" icon={<ShoppingCartOutlined />}>
             My Orders
           </Menu.Item>
-          <Menu.Item key="3" icon={<SettingOutlined />}>
+          <Menu.Item key="3" icon={<EnvironmentOutlined />}>
+            Delivary Address
+          </Menu.Item>
+          <Menu.Item key="4" icon={<SettingOutlined />}>
             Settings
           </Menu.Item>
-          <Menu.Item key="4" icon={<LogoutOutlined />}>
+          <Menu.Item key="5" icon={<LogoutOutlined />}>
             Log Out
           </Menu.Item>
         </Menu>
@@ -104,11 +115,15 @@ function ProfileDashboard({profileData}) {
 
       {/* Sider for desktop */}
       {!isMobile && (
-        <Sider width={250} theme="light">
+        <Sider width={250} theme="light" >
           <div style={{ padding: '20px', textAlign: 'center' }}>
-            <Avatar size={64} icon={<UserOutlined />} />
+            <Avatar
+              size={64}
+              src={userData?.profilePicture || undefined} 
+              icon={!userData?.profilePicture ? <UserOutlined /> : null}
+            />
             <Title level={4} style={{ marginTop: 10 }}>
-              John Doe
+              {userData?.firstName ? `${userData.firstName}` : 'My'} {userData?.lastName ? `${userData.lastName}` : 'Account'}
             </Title>
           </div>
 
@@ -119,10 +134,13 @@ function ProfileDashboard({profileData}) {
             <Menu.Item key="2" icon={<ShoppingCartOutlined />}>
               My Orders
             </Menu.Item>
-            <Menu.Item key="3" icon={<SettingOutlined />}>
+            <Menu.Item key="3" icon={<EnvironmentOutlined />}>
+              Delivary Address
+            </Menu.Item>
+            <Menu.Item key="4" icon={<SettingOutlined />}>
               Settings
             </Menu.Item>
-            <Menu.Item key="4" icon={<LogoutOutlined />}>
+            <Menu.Item key="5" icon={<LogoutOutlined />}>
               Log Out
             </Menu.Item>
           </Menu>

@@ -1,40 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from "@mui/material";
-
-const data = [
-  {
-    id: 1,
-    coverPhotoUrl: "https://res.cloudinary.com/dvw0hnvbs/image/upload/v1731547841/zlhvcoediya9daahd7g2.png",
-    name: "Classic T-Shirt",
-    orders: 450,
-  },
-  {
-    id: 2,
-    coverPhotoUrl: "https://res.cloudinary.com/dvw0hnvbs/image/upload/v1731547841/zlhvcoediya9daahd7g2.png",
-    name: "Denim Jeans",
-    orders: 350,
-  },
-  {
-    id: 3,
-    coverPhotoUrl: "https://res.cloudinary.com/dvw0hnvbs/image/upload/v1731547841/zlhvcoediya9daahd7g2.png",
-    name: "Hoodie",
-    orders: 300,
-  },
-  {
-    id: 4,
-    coverPhotoUrl: "https://res.cloudinary.com/dvw0hnvbs/image/upload/v1731547841/zlhvcoediya9daahd7g2.png",
-    name: "Sneakers",
-    orders: 280,
-  },
-  {
-    id: 5,
-    coverPhotoUrl: "https://res.cloudinary.com/dvw0hnvbs/image/upload/v1731547841/zlhvcoediya9daahd7g2.png",
-    name: "Baseball Cap",
-    orders: 200,
-  },
-];
+import { useGetOrders } from "../../Api/order/getOrdersApi";
 
 function PopularProductsTable() {
+
+  const { data: orders, isLoading, isError } = useGetOrders();
+  const [topProducts, setTopProducts] = useState([]);
+
+  useEffect(() => {
+    if (orders && orders.length > 0) {
+      const productMap = {};
+
+      // Aggregate quantities for each product
+      orders.forEach((order) => {
+        order.products.forEach((product) => {
+          if (productMap[product.productName]) {
+            productMap[product.productName] += product.quantity;
+          } else {
+            productMap[product.productName] = product.quantity;
+          }
+        });
+      });
+
+      // Convert the map to an array of products and sort by quantity
+      const sortedProducts = Object.entries(productMap)
+        .map(([productName, totalQuantity]) => ({
+          productName,
+          totalQuantity,
+          coverPhotoUrl: orders.find((order) =>
+            order.products.some((p) => p.productName === productName)
+          )?.products.find((p) => p.productName === productName)?.coverPhotoUrl || "",
+        }))
+        .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+      // Set top 5 products
+      setTopProducts(sortedProducts.slice(0, 5));
+    }
+  }, [orders]); 
+  
   return (
     <Box sx={{ padding: 2 }}>
     <h3 className="text-center mb-3">Popular Products by Orders</h3>
@@ -44,26 +47,26 @@ function PopularProductsTable() {
             <TableRow>
               <TableCell>Image</TableCell>
               <TableCell>Product Name</TableCell>
-              <TableCell>Orders</TableCell>
+              <TableCell>Total Orders</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((product) => (
-              <TableRow key={product.id}>
+            {topProducts.map((product, index) => (
+              <TableRow key={index}>
                 <TableCell>
                   <Avatar
                     src={product.coverPhotoUrl}
-                    alt={product.name}
+                    alt={product.productName}
                     sx={{ width: 64, height: 64 }}
                   />
                 </TableCell>
                 <TableCell>
                   <Typography variant="body1" fontWeight="bold">
-                    {product.name}
+                    {product.productName}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body2">{product.orders}</Typography>
+                  <Typography variant="body2">{product.totalQuantity}</Typography>
                 </TableCell>
               </TableRow>
             ))}

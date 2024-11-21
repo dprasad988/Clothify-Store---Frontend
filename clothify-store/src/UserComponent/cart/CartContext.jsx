@@ -6,6 +6,9 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
+  ////////////new add/////////////////////////////
+  const [billingData, setBillingData] = useState(null);
+  const [addToCartData, setAddToCartData] = useState(null);
 
   // Load the cart count from localStorage on initial load
   useEffect(() => {
@@ -22,7 +25,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartCount, updateCartCount, }}>
+    <CartContext.Provider value={{ cartCount, updateCartCount, setBillingData, billingData, setAddToCartData, addToCartData }}>
       {children}
     </CartContext.Provider>
   );

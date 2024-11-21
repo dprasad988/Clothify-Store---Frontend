@@ -1,24 +1,26 @@
-import { message } from 'antd';
 import axios from 'axios';
+import { message } from 'antd';
 
-export const AddOrderApi = async (orderPayload) => {
-
+export const GetBillingDetailsApi = async () => {
+  
   try {
     const token = localStorage.getItem("authToken");
+
     if (!token) {
       message.error("No token found. Please log in.");
       return;
-    }
-    const response = await axios.post('/admin/add-order', orderPayload, {
+    } 
+
+    const response = await axios.get('/admin/get-billingDetails', {
       headers: {
         'Content-Type': 'application/json', 
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    return response;
 
   } catch (error) {
-    console.error("Failed add product", error);
+    console.error("Failed get billingDetails", error);
     return false;
   }
 };

@@ -93,40 +93,33 @@ function ProductTable() {
       {/* Add Product Modal */}
       <AddProduct open={openAddProduct} close={handleCloseAddProductModal} />
 
-      {/* ////////////////////////////////////////Product table///////////////////////////////////////// */}
-      <TableContainer component={Paper}>
-        <Table>
+
+
+      {/* Product table */}
+      <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+        <Table stickyHeader>
           <TableHead>
-            <TableRow>
-              <TableCell>Product Name</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Pieces</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>New Arrival</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Sub-Category</TableCell>
-              <TableCell>Image</TableCell>
-              <TableCell>Variants</TableCell>
-              <TableCell>Actions</TableCell>
+            <TableRow sx={{backgroundColor: '#f9f9f9'}}>
+              <TableCell><strong>Product Image</strong></TableCell>
+              <TableCell><strong>Variants</strong></TableCell>
+              <TableCell><strong>Product Name</strong></TableCell>
+              <TableCell><strong>Price</strong></TableCell>
+              <TableCell><strong>Pieces</strong></TableCell>
+              <TableCell><strong>Status</strong></TableCell>
+              <TableCell><strong>New Arrival</strong></TableCell>
+              <TableCell><strong>Category</strong></TableCell>
+              <TableCell><strong>Sub-Category</strong></TableCell>
+              <TableCell><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {products.map((product, index) => (
               <TableRow key={index}>
-                <TableCell>{product.productName}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.pieces}</TableCell>
-                <TableCell>{product.status}</TableCell>
-                <TableCell>{product.isNewArrival ? "Yes" : "No"}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>{product.categoryName.join(", ")}</TableCell>
-                <TableCell>{product.subCategoryName}</TableCell>
                 <TableCell>
                   <img
                     src={product.coverPhotoUrl}
                     alt={product.productName}
-                    style={{ width: "100px", height: "auto" }}
+                    style={{ width: "100px", height: "auto", borderRadius: '0 10px 10px 10px' }}
                   />
                 </TableCell>
                 <TableCell>
@@ -136,6 +129,13 @@ function ProductTable() {
                     </div>
                   ))}
                 </TableCell>
+                <TableCell>{product.productName}</TableCell>
+                <TableCell>{product.price}</TableCell>
+                <TableCell>{product.pieces}</TableCell>
+                <TableCell>{product.status}</TableCell>
+                <TableCell>{product.isNewArrival ? "Yes" : "No"}</TableCell>
+                <TableCell>{product.categoryName.join(", ")}</TableCell>
+                <TableCell>{product.subCategoryName}</TableCell>
                 <TableCell>
                   {/* Edit and Delete icons */}
                   <IconButton

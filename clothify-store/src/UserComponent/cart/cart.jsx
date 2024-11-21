@@ -15,12 +15,15 @@ import {
   Typography
 } from '@mui/material';
 import { useCart } from './CartContext';
-import { handleBuyFromCart } from '../../Config/payherePaymentCart';
+import { useNavigate } from 'react-router-dom';
+// import { handleBuyFromCart } from '../../Config/payherePaymentCart';
 
   const Cart = ({ open, close }) => {
 
     const [rows, setRows] = useState([]);
-    const { cartCount, updateCartCount } = useCart();
+    const { cartCount, updateCartCount, setBillingData } = useCart();
+    const navigate = useNavigate();
+
 
     const clearCart = () => {
       localStorage.removeItem("cart");
@@ -99,17 +102,24 @@ import { handleBuyFromCart } from '../../Config/payherePaymentCart';
         size: row.size,
         quantity: row.quantity,
         totalPrice: row.price * row.quantity,
+        coverPhotoUrl: row.coverPhotoUrl,
+        billingId: null,
       }))
     };
 
-    try {
+    // try {
       
-      await handleBuyFromCart(orderData, close, clearCart);
+    //   await handleBuyFromCart(orderData, close, clearCart);
 
-      // close(); // Close the dialog after successful checkout
-    } catch (error) {
-      console.error("Error submitting order:", error);
-    }
+    //   // close(); // Close the dialog after successful checkout
+    // } catch (error) {
+    //   console.error("Error submitting order:", error);
+    // }
+
+    setBillingData({ orderData, close, clearCart });
+
+    navigate('/billing');
+
   };
 
   return (

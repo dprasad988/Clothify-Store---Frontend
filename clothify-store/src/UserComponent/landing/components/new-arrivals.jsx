@@ -20,7 +20,7 @@ function NewArrivals() {
   return (
     <div className='mb-3 py-1' style={{backgroundColor: '#FBE9E7',}}>
       <Typography variant="h4" align="center" className='mt-4' data-aos="fade-right" 
-        style={{fontSize: '50px', fontWeight: 'bolder'}}
+        style={{fontSize: '50px', fontWeight: 'bolder',}}
       >
         NEW ARRIVALS
       </Typography>
@@ -37,8 +37,9 @@ function NewArrivals() {
             key={index} 
             container 
             justifyContent="center"
-            data-aos='slide-right'
+            data-aos='fade-left'
             data-aos-delay={index * 100}
+            data-aos-offset="0"
           >
             {/* // pass data to NewArrivalCard */}
             <NewArrivalCard product={product} />

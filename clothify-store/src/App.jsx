@@ -20,6 +20,7 @@ import TeensCategory from './UserComponent/product-category/teens-category';
 import AdminDashboard from './AdminComponent/dashboard/AdminDashboard';
 import { CartProvider } from './UserComponent/cart/CartContext';
 import Invoice from './UserComponent/invoice/Invoice';
+import BillingInfo from './UserComponent/billing/BillingInfo';
 
 function App() {
   return (
@@ -47,6 +48,8 @@ function App() {
           <Route path="/category-teens" element={<Layout><TeensCategory /></Layout>} />
           <Route path='/admin' element={<AdminDashboard/>} />
           <Route path='/invoice' element={<Invoice/>} />
+          <Route path='/billing' element={<BillingInfo/>} />
+
 
 
           {/* =====================Admin====================== */}

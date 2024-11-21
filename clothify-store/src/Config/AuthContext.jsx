@@ -9,9 +9,10 @@ export const AuthProvider = ({ children }) => {
 
   const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
   const [isAuthenticated, setIsAuthenticated] = useState(!!authToken);
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
-  const login = async (token) => {
+  const login = async (token, userData) => {
     setAuthToken(token);
     localStorage.setItem('authToken', token);
 
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsAuthenticated(true);
+      setUserData(userData);
       message.success('Successfully logged in.');
       navigate('/profile'); 
     } catch (error) {
@@ -34,12 +36,13 @@ export const AuthProvider = ({ children }) => {
     setAuthToken('');
     localStorage.removeItem('authToken');
     setIsAuthenticated(false);
+    setUserData(null);
     message.success('You have been logged out.');
     navigate('/login'); 
   };
 
   return (
-    <AuthContext.Provider value={{ authToken, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ authToken, login, logout, isAuthenticated, userData, }}>
       {children}
     </AuthContext.Provider>
   );

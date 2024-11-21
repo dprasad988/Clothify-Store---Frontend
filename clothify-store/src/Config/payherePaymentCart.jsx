@@ -1,13 +1,13 @@
 import { message } from "antd";
 import { loadPayHere } from "./payhereLoader"; 
-import { AddOrderApi } from "../Api/order/addOrderApi";
 import { UpdateProductQuantityApi } from "../Api/order/updateProductQtyApi";
 import { UpdatePaidApi } from "../Api/order/updatePaidApi"
+import { AddOrderApi } from "../Api/order/addOrderApi";
 
-export const handleBuyFromCart = async ( orderData, close, clearCart) => {
-
-    const { date, products, status } = orderData;
-    const orderPayload = { date, products, status };
+export const handleBuyFromCart = async ( orderData, close, clearCart,) => {
+    
+    const { date, products, status, billingId} = orderData;
+    const orderPayload = { date, products, status, billingId };
 
     const data = await AddOrderApi(orderPayload);
 

@@ -37,8 +37,9 @@ function TrendingProducts() {
             key={index} 
             container 
             justifyContent="center"
-            data-aos='slide-right'
+            data-aos='fade-right'
             data-aos-delay={index * 100}
+            data-aos-offset="0"
           >
             {/* // pass data to NewArrivalCard */}
             <NewArrivalCard product={product} />

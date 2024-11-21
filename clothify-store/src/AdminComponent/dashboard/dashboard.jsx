@@ -10,6 +10,9 @@ import StatCard from "./StatCard";
 import OrdersChart from "./OrdersChart";
 import ClothingCategoryChart from "./ClothingCategoryChart";
 import PopularProductsTable from "./PopularProductsTable";
+import { GetOrderCountApi } from "../../Api/order/getOrderCountApi";
+import { GetUserCountApi } from "../../Api/signup/getUserCountApi";
+import { GetProductCountApi } from "../../Api/product/getProductCountApi";
 
 function Dashboard() {
   const [stats, setStats] = useState({
@@ -20,12 +23,25 @@ function Dashboard() {
   });
 
   useEffect(() => {
-    setStats({
-      totalCustomers: 1200,
-      totalOrders: 300,
-      totalProducts: 1500,
-      totalSales: 24000,
-    });
+    const fetchCountData = async () => {
+      try {
+        const orderCount = (await GetOrderCountApi()).data;
+        const userCount = (await GetUserCountApi()).data;
+        const productCount = (await GetProductCountApi()).data;
+
+        setStats({
+          totalCustomers: userCount,
+          totalOrders: orderCount,
+          totalProducts: productCount,
+          totalSales: 24000,
+        });
+      } catch (error) {
+        console.error("Error fetching count data:", error);
+      }
+
+    }
+    
+    fetchCountData();
   }, []);
 
   const cardData = [
@@ -48,7 +64,7 @@ function Dashboard() {
     },
     {
       title: "Total Sales",
-      count: stats.totalSales,
+      count: `Rs. ${stats.totalSales.toLocaleString()}`,
       icon: <DollarOutlined style={{ fontSize: "24px", color: "#eb2f96" }} />,
     },
   ];
