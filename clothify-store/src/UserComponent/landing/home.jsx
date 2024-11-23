@@ -6,6 +6,7 @@ import BrandingSection from './components/our-brandings'
 import OurBranches from './components/our-branches'
 import ShoppingFeatures from './components/shopping-features'
 import TrendingProducts from './components/trending-now'
+import Banner from './components/banner'
 
 function Home() {
   return (
@@ -14,6 +15,7 @@ function Home() {
       <ShoppingFeatures/>
       <CategorySection/>
       <TrendingProducts/>
+      <Banner/>
       <NewArrivals />
       <BrandingSection/>
       <OurBranches/>

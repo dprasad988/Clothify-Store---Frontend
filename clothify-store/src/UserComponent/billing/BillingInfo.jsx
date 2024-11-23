@@ -5,11 +5,34 @@ import { AddBillingDetailsApi } from "../../Api/billing/AddBillingDetailsApi";
 import { AddOrderApi } from "../../Api/order/addOrderApi";
 import {handleBuyFromCart} from "../../Config/payherePaymentCart"
 import { message } from "antd";
+import { GetBillingDetailsApi } from "../../Api/billing/GetBillingDetailsApi";
 
 const BillingInfo = () => {
   const [paymentMethod, setPaymentMethod] = useState("helaPay");
   const { billingData } = useCart();
   const { orderData, close, clearCart } = billingData;
+  const [form] = Form.useForm(); 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await GetBillingDetailsApi();
+
+      if (data) {
+        // Populate the form with fetched billing details
+        form.setFieldsValue({
+          country: data?.country || "",
+          firstName: data?.firstName || "",
+          lastName: data?.lastName || "",
+          address: data?.address || "",
+          city: data?.city || "",
+          postalCode: data?.postalCode || "",
+          phoneNumber: data?.phoneNumber || "",
+        });
+      }
+
+    }
+    fetchData();
+  }, [])
 
   const handlePaymentChange = (e) => {
     setPaymentMethod(e.target.value);
@@ -79,7 +102,20 @@ const BillingInfo = () => {
         {/* Billing Address */}
         <h3>Billing Address</h3>
 
-        <Form layout="vertical" onFinish={handleBillingSubmit}>
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleBillingSubmit}
+          initialValues={{
+            country: "",
+            firstName: "",
+            lastName: "",
+            address: "",
+            city: "",
+            postalCode: "",
+            phoneNumber: "",
+          }}
+        >
           <Form.Item label="Country/Region" name="country">
             <Input placeholder="Enter your country or region" />
           </Form.Item>
@@ -213,7 +249,7 @@ const BillingInfo = () => {
           <Button
             type="primary"
             block
-            style={{ marginTop: "16px" }}
+            style={{ marginTop: "16px", backgroundColor: '#FF9800', fontWeight: 'bold' }}
             htmlType="submit"
           >
             Pay Now

@@ -4,4 +4,4 @@ export const colors = {
     thired: "#FFFFFF"
 
 };
-// FF9800
+// #FF9800

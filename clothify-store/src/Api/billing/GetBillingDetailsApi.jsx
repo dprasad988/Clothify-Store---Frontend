@@ -12,12 +12,14 @@ export const GetBillingDetailsApi = async () => {
     } 
 
     const response = await axios.get('/admin/get-billingDetails', {
+      
       headers: {
         'Content-Type': 'application/json', 
         Authorization: `Bearer ${token}`,
       },
     });
-    return response;
+    return response.data;
+
 
   } catch (error) {
     console.error("Failed get billingDetails", error);

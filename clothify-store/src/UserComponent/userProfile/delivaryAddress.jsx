@@ -23,7 +23,21 @@ function DeliveryAddress() {
     const fetchData = async () => {
       try {
         const response = await GetBillingDetailsApi();
-        setFormData(response.data);
+        if (response && response.data) {
+          setFormData(response.data); 
+        } else {
+          setFormData({
+            billingId: "",
+            firstName: "",
+            lastName: "",
+            address: "",
+            city: "",
+            postalCode: "",
+            country: "",
+            phoneNumber: "",
+            cusId: "",
+          });
+        }
       } catch (error) {
         console.error("Error fetching delivery address:", error);
       }

@@ -11,6 +11,7 @@ import Grid from "@mui/material/Grid2";
 import { message } from "antd";
 import { useCart } from "../cart/CartContext";
 import { useNavigate } from "react-router-dom";
+import { ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
 
 function AddToCart({ open, close, product }) {
   const [selectedColor, setSelectedColor] = useState("Orange");
@@ -29,6 +30,9 @@ function AddToCart({ open, close, product }) {
     () => [...new Set(product.variants?.map((variant) => variant.color))],
     [product.variants]
   );
+
+  // Set eken duplicate values remove krnawa
+  // ... spread operator eken back to convert to array
 
   // Update available sizes and images when the selected color changes
   useEffect(() => {
@@ -62,13 +66,11 @@ function AddToCart({ open, close, product }) {
     if (uniqueColors.length) {
       setSelectedColor(uniqueColors[0]);
     }
-  }, [uniqueColors]);
-
-  useEffect(() => {
     if (availableSizes.length) {
       setSelectedSize(availableSizes[0]);
     }
-  }, [availableSizes]);
+  }, [uniqueColors, availableSizes]);
+
 
   // Calculate the total price directly
   const totalPrice = useMemo(
@@ -86,6 +88,7 @@ function AddToCart({ open, close, product }) {
   const handleDecrement = () => {
     setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 1));
   };
+
   const handleIncrement = () => {
     setQuantity((prevQuantity) => {
       return prevQuantity < availableQty ? prevQuantity + 1 : prevQuantity;
@@ -180,6 +183,7 @@ function AddToCart({ open, close, product }) {
                           width: "100%",
                           height: "100%",
                           objectFit: "cover",
+                          borderRadius: '0 5px 0 5px'
                         }}
                       />
                     </Grid>
@@ -197,6 +201,7 @@ function AddToCart({ open, close, product }) {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
+                      borderRadius: '0 5px 0 5px'
                     }}
                   />
                 )}
@@ -227,6 +232,7 @@ function AddToCart({ open, close, product }) {
                           : "gray",
                         marginRight: "10px",
                         cursor: "pointer",
+                        borderRadius: '0 5px 0 5px'
                       }}
                       onClick={() => handleColorChange(variant)}
                     ></div>
@@ -244,10 +250,11 @@ function AddToCart({ open, close, product }) {
                       className="text-center"
                       style={{
                         width: "30px",
-                        backgroundColor: "lightblue",
+                        backgroundColor: "#FF9800",
                         height: "30px",
                         marginRight: "10px",
                         cursor: "pointer",
+                        borderRadius: '0 5px 0 5px'
                       }}
                       onClick={() => handleSizeChange(size)}
                     >
@@ -268,52 +275,56 @@ function AddToCart({ open, close, product }) {
                 <div className="d-flex mt-2">
                   <p style={{ fontWeight: "bold" }}>Quantity</p>
                   <div className="d-flex ms-3">
-                    <button
+                    <div
                       onClick={handleDecrement}
                       className="text-center"
                       style={{
                         width: "30px",
-                        backgroundColor: "lightblue",
                         height: "30px",
+                        cursor: 'pointer'
                       }}
                     >
                       -
-                    </button>
+                    </div>
                     <div
-                      className="text-center"
                       style={{
                         width: "30px",
-                        backgroundColor: "lightblue",
+                        backgroundColor: "#FF9800",
                         height: "30px",
+                        borderRadius: '10px',
+                        textAlign: 'center'
+
                       }}
                     >
                       {quantity}
                     </div>
-                    <button
+                    <div
                       onClick={handleIncrement}
                       className="text-center"
                       style={{
                         width: "30px",
-                        backgroundColor: "lightblue",
                         height: "30px",
+                        cursor: 'pointer'
                       }}
                     >
                       +
-                    </button>
+                    </div>
                   </div>
                 </div>
                 <div className="d-flex">
                   <button
                     onClick={handlePassAddToCart}
                     className="mt-4 btn btn-primary w-100 me-3"
+                    style={{borderRadius: '0 10px 0 10px',  backgroundColor: '#FF9800', fontWeight: 'bold'}}
                   >
-                    Buy Now
+                    <ShoppingOutlined/> Buy Now
                   </button>
                   <button
                     onClick={handleAddToCart}
                     className="mt-4 btn btn-primary w-100 "
+                    style={{borderRadius: '0 10px 0 10px', backgroundColor: '#FF9800',  fontWeight: 'bold'}}
                   >
-                    Add To Cart
+                    <ShoppingCartOutlined/> Add To Cart
                   </button>
                 </div>
               </Grid>

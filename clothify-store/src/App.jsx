@@ -21,6 +21,7 @@ import AdminDashboard from './AdminComponent/dashboard/AdminDashboard';
 import { CartProvider } from './UserComponent/cart/CartContext';
 import Invoice from './UserComponent/invoice/Invoice';
 import BillingInfo from './UserComponent/billing/BillingInfo';
+import ViewAllNewArrivals from './UserComponent/landing/components/view-all-new';
 
 function App() {
   return (
@@ -33,22 +34,18 @@ function App() {
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/login" element={<Layout><SignIn /></Layout>} />
           <Route path="/signup" element={<Layout><SignUp /></Layout>} />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <Layout><Profile /></Layout>
-              </PrivateRoute>
-            }
-          />
-          <Route path="/add" element={<AddProduct />} />
+
+          <Route path="/profile"element={<PrivateRoute><Layout><Profile /></Layout></PrivateRoute>}/>
+          <Route path="/add" element={<PrivateRoute><AddProduct /></PrivateRoute>} />
+          <Route path='/admin' element={<PrivateRoute><AdminDashboard/></PrivateRoute>} />
+          <Route path='/invoice' element={<PrivateRoute><Invoice/></PrivateRoute>} />
+          <Route path='/billing' element={<PrivateRoute><BillingInfo/></PrivateRoute>} />
+
           <Route path="/category-men" element={<Layout><MenCategory /></Layout>} />
           <Route path="/category-women" element={<Layout><WomenCategory /></Layout>} />
           <Route path="/category-kids" element={<Layout><KidsCategory /></Layout>} />
           <Route path="/category-teens" element={<Layout><TeensCategory /></Layout>} />
-          <Route path='/admin' element={<AdminDashboard/>} />
-          <Route path='/invoice' element={<Invoice/>} />
-          <Route path='/billing' element={<BillingInfo/>} />
+          <Route path="/new-arrivals" element={<Layout><ViewAllNewArrivals /></Layout>} />
 
 
 

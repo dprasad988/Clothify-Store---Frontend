@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import NewArrivalCard from './new-arrival-card';
-import { Button, Grid2, Typography } from '@mui/material';
+import { Grid2, Typography } from '@mui/material';
 import AOS from 'aos';
 import { useGetProducts } from '../../../Api/product/getProductApi';
-import { Link } from 'react-router-dom';
+import { Pagination } from "antd";
 
-function NewArrivals() {
+function ViewAllNewArrivals() {
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -16,6 +16,21 @@ function NewArrivals() {
   const newProducts = products.filter(
     product => product.isNewArrival === true 
   );
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Calculate the products for the current page
+  const paginatedProducts = newProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo(0, 0); // Scroll to the top when changing pages
+  };
   
 
   return (
@@ -28,7 +43,7 @@ function NewArrivals() {
       <p className='text-center' data-aos="fade-left">Let's explore what is the new-in our store.</p>
 
       <Grid2 container spacing={2} justifyContent="center">
-        {newProducts.slice(0, 4).map((product, index) => (
+        {paginatedProducts.map((product, index) => (
           <Grid2 
             item 
             xs={12} 
@@ -48,25 +63,20 @@ function NewArrivals() {
           </Grid2>
         ))}
       </Grid2>
-      <div style={{display: 'flex', justifyContent: 'center' , padding: '20px'}}>
-        <Link to= '/new-arrivals'>
-        <Button variant='outlined' color='#FF9800' sx={{
-          color: '#FF9800',
-          borderColor: '#FF9800',
-          borderRadius: '30px',
-          borderWidth: '2px',
-          fontWeight: 'bold',
-          width: '130px',
-          textTransform: 'none',
-          '&:hover': {
-            borderColor: '#FF9800',
-            backgroundColor: 'rgba(255, 152, 0, 0.1)'
-          }
-        }}>View All</Button>
-        </Link>
+      
+      {/* Pagination */}
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <Pagination
+          current={currentPage}
+          pageSize={itemsPerPage}
+          total={newProducts.length}
+          onChange={handlePageChange}
+          showSizeChanger={false} // Disable page size change dropdown
+        />
       </div>
+
     </div>
   );
 }
 
-export default NewArrivals;
+export default ViewAllNewArrivals;

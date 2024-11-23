@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Card } from 'antd';
+import { Card, Tooltip } from 'antd';
 import AddToCart from '../../addToCart/AddToCart';
+import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 
 const { Meta } = Card;
 
 function NewArrivalCard({ product }) {
 
   const [open, setOpen] = useState(false)
-
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const handleOpenAddToCart = () => {
     setOpen(true)
@@ -15,6 +16,11 @@ function NewArrivalCard({ product }) {
   const handleCloseAddToCart = () => {
       setOpen(false)
   }
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite); 
+    console.log(`${product.productName} has been ${!isFavorite ? "added to" : "removed from"} favorites.`);
+  };
 
   return (
     <div>
@@ -31,6 +37,26 @@ function NewArrivalCard({ product }) {
             {product.status ? 'In Stock' : 'Out of Stock'}
           </p>
         </div>
+
+        <Tooltip title={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+          <div
+            style={{
+              position: 'absolute',
+              top: '400px',
+              right: '10px',
+              cursor: 'pointer',
+              color: isFavorite ? 'red' : 'gray',
+              fontSize: '24px',
+            }}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering the card's onClick
+              toggleFavorite();
+            }}
+          >
+            {isFavorite ? <HeartFilled /> : <HeartOutlined />}
+          </div>
+        </Tooltip>
+        
       </Card>
 
       <AddToCart open={open} close={handleCloseAddToCart} product={product}/>

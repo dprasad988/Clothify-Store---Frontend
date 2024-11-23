@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { signinApi } from "../../Api/signin/signinApi";
 import bcrypt from 'bcryptjs';
 import { AuthContext } from "../../Config/AuthContext";
+import { message } from "antd";
 
 function SignIn({ onClose }) {
   const { login } = useContext(AuthContext);
@@ -18,11 +19,11 @@ function SignIn({ onClose }) {
     };
     try{
       const data = await signinApi(values);
-      const { password: hashedPassword, token, ...user } = data;  
+      const { password: hashedPassword, token, role, ...user } = data;  
 
       const isPasswordValid = bcrypt.compareSync(values.password, hashedPassword);
       if (isPasswordValid && token) {
-        login(token, user); 
+        login(token, role, user); 
         // message.success('Successfully logged in.');
       } else {
         console.error('Invalid password');

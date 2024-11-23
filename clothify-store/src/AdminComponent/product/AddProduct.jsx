@@ -27,7 +27,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const sizes = ["S", "M", "L", "XL"];
 const colors = ["Blue", "Red", "Orange", "Yellow", "Black", "Pink", "Green"];
 const categoryNames = ["Men", "Women", "Teen", "Kids"];
-const subCategoryNames = ["Jeans", "Blouse", "Shirt", "T-shirt"];
+const subCategoryNames = ["Jeans", "Blouse", "Shirt", "T-shirt", "Trouser"];
 const brands = ["Moose", "Gucci"];
 
 function AddProduct({ onSubmit, open, close }) {

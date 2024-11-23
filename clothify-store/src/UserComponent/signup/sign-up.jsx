@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Container, Grid2 } from '@mui/material';
-import {Link } from 'react-router-dom'
+import {Link, useNavigate } from 'react-router-dom'
 import { signupApi } from '../../Api/signup/signupApi';
 import bcrypt from 'bcryptjs';
+import { message } from 'antd';
 
 function SignUp() {
+
+    const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,9 +24,13 @@ function SignUp() {
 
     try{
         const data = await signupApi(formData);
-        console.log('data', data);
+        if(data){
+            message.success("Sign Up successfully.")
+            navigate("/login")
+        }
     } catch(erorr){
         console.error('Error during sign up', erorr);
+        message.error("Error during sign up.")
     }
   };
 

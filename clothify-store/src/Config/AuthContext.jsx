@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
-  const login = async (token, userData) => {
+  const login = async (token, role, userData) => {
     setAuthToken(token);
     localStorage.setItem('authToken', token);
 
@@ -22,8 +22,18 @@ export const AuthProvider = ({ children }) => {
       });
       setIsAuthenticated(true);
       setUserData(userData);
-      message.success('Successfully logged in.');
-      navigate('/profile'); 
+
+      // Navigate based on the user's role
+      if (role === 'admin') {
+        message.success('Successfully logged in.');
+        navigate('/admin');
+      } else if (role === 'user') {
+        message.success('Successfully logged in.');
+        navigate('/profile'); 
+      } else {
+        message.warning('Unknown role. Please contact support.');
+        logout(); 
+      }
     } catch (error) {
       setAuthToken('');
       localStorage.removeItem('authToken');

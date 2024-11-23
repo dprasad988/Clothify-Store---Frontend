@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Menu, Drawer } from "antd";
 import { colors } from "../../../colors";
 import { Input, Select, Button } from "antd";
-import { LockOutlined, UserOutlined, HeartOutlined, MailOutlined, GlobalOutlined, HeartFilled } from "@ant-design/icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
   SearchOutlined,
   ShoppingCartOutlined,
@@ -172,9 +172,11 @@ function NavBar() {
             <Menu.SubMenu
               key="men-submenu"
               title={
-                <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
-                  Men
-                </span>
+                <Link to='/category-men' style={{ textDecoration: 'none'}}>      
+                  <span style={{ marginLeft: "10px", color: "white", fontSize: "17px"}}>
+                    Men
+                  </span>
+                </Link>   
               }
             >
               <Menu.Item key="men-tshirt">T-Shirt</Menu.Item>
@@ -186,9 +188,11 @@ function NavBar() {
             <Menu.SubMenu
               key="women-submenu"
               title={
+                <Link to='/category-women' style={{ textDecoration: 'none'}}>  
                 <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
                   Women
                 </span>
+                </Link>
               }
             >
               <Menu.Item key="women-tshirt">T-Shirt</Menu.Item>
@@ -200,9 +204,11 @@ function NavBar() {
             <Menu.SubMenu
               key="kids-baby-submenu"
               title={
+                <Link to='/category-kids' style={{ textDecoration: 'none'}}>  
                 <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
                   Kids
                 </span>
+                </Link>
               }
             >
               <Menu.Item key="kids-tshirt">T-Shirt</Menu.Item>
@@ -214,9 +220,11 @@ function NavBar() {
             <Menu.SubMenu
               key="toys-submenu"
               title={
+                <Link to='/category-teens' style={{ textDecoration: 'none'}}>  
                 <span style={{ marginLeft: "10px", color: "white", fontSize: "17px" }}>
-                  Toys
+                  Teen
                 </span>
+                </Link>
               }
             >
               <Menu.Item key="toys-plush">Plush Toys</Menu.Item>
